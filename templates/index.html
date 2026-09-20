@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Data Redundancy Removal System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(
+                135deg,
+                #0f172a,
+                #1e1b4b,
+                #312e81,
+                #0f766e
+            );
+            background-size: 400% 400%;
+            animation: gradientMove 12s ease infinite;
+            color: white;
+            padding: 30px 15px;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        /* HEADER */
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeDown 0.8s ease;
+        }
+
+        .header .icon {
+            font-size: 55px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-top: 10px;
+        }
+
+        .header p {
+            color: #cbd5e1;
+            margin-top: 8px;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* MAIN CARD */
+
+        .card {
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.20);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            animation: cardAppear 0.9s ease;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        /* FORM */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 19px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 48px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        input::placeholder {
+            color: #cbd5e1;
+        }
+
+        input:focus {
+            border-color: #38bdf8;
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* BUTTON */
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(
+                90deg,
+                #06b6d4,
+                #6366f1,
+                #a855f7
+            );
+            background-size: 200% auto;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            animation: buttonGradient 4s linear infinite;
+        }
+
+        @keyframes buttonGradient {
+            0% {
+                background-position: 0% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.45);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* STATUS MESSAGE */
+
+        .message-container {
+            margin-bottom: 25px;
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-weight: bold;
+            text-align: center;
+            animation: messageIn 0.6s ease;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* SUCCESS */
+
+        .success {
+            background: rgba(34, 197, 94, 0.20);
+            border: 1px solid #22c55e;
+            color: #bbf7d0;
+            animation:
+                messageIn 0.6s ease,
+                successPulse 1.5s ease 0.6s;
+        }
+
+        @keyframes successPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 rgba(34, 197, 94, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.55);
+            }
+        }
+
+        /* ERROR */
+
+        .error {
+            background: rgba(239, 68, 68, 0.20);
+            border: 1px solid #ef4444;
+            color: #fecaca;
+            animation:
+                messageIn 0.6s ease,
+                shake 0.5s ease 0.6s;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(8px);
+            }
+
+            60% {
+                transform: translateX(-6px);
+            }
+
+            80% {
+                transform: translateX(6px);
+            }
+        }
+
+        /* FEATURES */
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .feature {
+            padding: 20px 15px;
+            text-align: center;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .feature h3 {
+            font-size: 15px;
+        }
+
+        .feature p {
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-top: 5px;
+        }
+
+        /* RECORDS LINK */
+
+        .records-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: #7dd3fc;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .records-link:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 650px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .card {
+                padding: 25px 18px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="icon">🛡️</div>
+
+        <h1>Data Redundancy Removal System</h1>
+
+        <p>
+            Intelligent data validation & duplicate detection
+        </p>
+
+    </div>
+
+
+    <!-- MAIN CARD -->
+
+    <div class="card">
+
+        <h2>➕ Add New User</h2>
+
+
+        <!-- FLASH MESSAGE -->
+
+        <div class="message-container">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% for category, message in messages %}
+
+                    <div class="message {{ category }}">
+
+                        {% if category == "success" %}
+                            ✅
+                        {% else %}
+                            ⚠️
+                        {% endif %}
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endwith %}
+
+        </div>
+
+
+        <!-- FORM -->
+
+        <form method="POST" action="/add" id="userForm">
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+                <label>👤 Full Name</label>
+
+                <div class="input-box">
+
+                    <span class="input-icon">👤</span>
+
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Enter full name"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label>📧 Email Address</label>
+
+                <div class="input-box">
+
+                    <span class="input-icon">📧</span>
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="example@email.com"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <div class="form-group">
+
+                <label>📱 Phone Number</label>
+
+                <div class="input-box">
+
+                    <span class="input-icon">📱</span>
+
+                    <input
+                        type="text"
+                        name="phone"
+                        placeholder="10 digit phone number"
+                        maxlength="10"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- CITY -->
+
+            <div class="form-group">
+
+                <label>📍 City</label>
+
+                <div class="input-box">
+
+                    <span class="input-icon">📍</span>
+
+                    <input
+                        type="text"
+                        name="city"
+                        placeholder="Enter city"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <button
+                type="submit"
+                class="submit-btn"
+                id="submitBtn"
+            >
+                🔍 Validate & Add Data
+            </button>
+
+        </form>
+
+
+        <!-- FEATURES -->
+
+        <div class="features">
+
+            <div class="feature">
+
+                <div class="feature-icon">🔍</div>
+
+                <h3>Duplicate Detection</h3>
+
+                <p>
+                    Checks existing database records
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">📧</div>
+
+                <h3>Email Validation</h3>
+
+                <p>
+                    Detects invalid email addresses
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">📱</div>
+
+                <h3>Phone Validation</h3>
+
+                <p>
+                    Validates phone number format
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECORDS -->
+
+        <a href="/records" class="records-link">
+            📊 View Verified Records →
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const form = document.getElementById("userForm");
+    const button = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", function () {
+
+        button.innerHTML = "⏳ Validating Data...";
+        button.style.opacity = "0.75";
+        button.style.pointerEvents = "none";
+
+    });
+
+
+    /* Phone: numbers only */
+
+    const phoneInput = document.querySelector('input[name="phone"]');
+
+    phoneInput.addEventListener("input", function () {
+
+        this.value = this.value.replace(/\D/g, "");
+
+    });
+
+</script>
+
+</body>
+</html>
