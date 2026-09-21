@@ -588,29 +588,66 @@
 
 
 <script>
-
     const form = document.getElementById("userForm");
     const button = document.getElementById("submitBtn");
 
-    form.addEventListener("submit", function () {
-
-        button.innerHTML = "⏳ Validating Data...";
-        button.style.opacity = "0.75";
-        button.style.pointerEvents = "none";
-
-    });
-
-
-    /* Phone: numbers only */
-
+    const emailInput = document.querySelector('input[name="email"]');
     const phoneInput = document.querySelector('input[name="phone"]');
 
+    // Phone: numbers only
     phoneInput.addEventListener("input", function () {
-
-        this.value = this.value.replace(/\D/g, "");
-
+        this.value = this.value.replace(/\D/g, "").slice(0, 10);
     });
 
+    // Instant client-side validation
+    form.addEventListener("submit", function (event) {
+
+        const email = emailInput.value.trim();
+        const phone = phoneInput.value.trim();
+
+        const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+        // Invalid email
+        if (!emailPattern.test(email)) {
+            event.preventDefault();
+
+            showMessage(
+                "⚠️ Invalid Email Detected!",
+                "error"
+            );
+
+            emailInput.focus();
+            return;
+        }
+
+        // Invalid phone
+        if (!/^\d{10}$/.test(phone)) {
+            event.preventDefault();
+
+            showMessage(
+                "⚠️ Invalid Phone Number Detected!",
+                "error"
+            );
+
+            phoneInput.focus();
+            return;
+        }
+
+        // Valid client-side input → send to Flask/Aurora
+        button.innerHTML = "⏳ Validating Data...";
+        button.disabled = true;
+    });
+
+    function showMessage(text, type) {
+
+        const container = document.querySelector(".message-container");
+
+        container.innerHTML = `
+            <div class="message ${type}">
+                ${text}
+            </div>
+        `;
+    }
 </script>
 
 </body>
